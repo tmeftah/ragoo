@@ -1,10 +1,9 @@
 # Logic to implement vector database using chroma
 import uuid
-import chromadb
 from typing import List
+import chromadb
 from chromadb.utils.embedding_functions import EmbeddingFunction
 import requests
-import uuid
 from ragoo.core.config import settings
 
 
@@ -22,8 +21,18 @@ class ChromaHandler:
 
     def add_documents(self, documents: list[str], metadata: list[dict]):
         """Store documents with automatic embedding generation"""
+        """Handle empty metadata gracefully"""
+        # Ensure metadata has same length as documents
+        processed_metadata = []
+        for meta in metadata:
+            # Add default values if metadata is empty
+            if not meta:
+                processed_metadata.append({"source": "unknown"})
+            else:
+                processed_metadata.append(meta)
+
         ids = [str(uuid.uuid4()) for _ in documents]
-        self.collection.add(ids=ids, documents=documents, metadatas=metadata)
+        self.collection.add(ids=ids, documents=documents, metadatas=processed_metadata)
         return ids
 
     def query(self, query_text: str, k: int = 3) -> list[str]:
