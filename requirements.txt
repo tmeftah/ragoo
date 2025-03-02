@@ -5,4 +5,5 @@ SQLAlchemy
 bcrypt
 python-multipart
 pydantic[email]
+pytest
 # Add other dependencies here
