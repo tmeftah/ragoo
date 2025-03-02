@@ -1,0 +1,11 @@
+# Docker compose configuration
+
+version: "3.9"
+services:
+  web:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    command: uvicorn ragoo.main:app --host 0.0.0.0 --reload

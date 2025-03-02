@@ -1,0 +1,8 @@
+fastapi
+uvicorn[standard]
+pydantic
+SQLAlchemy
+bcrypt
+python-multipart
+pydantic[email]
+# Add other dependencies here
