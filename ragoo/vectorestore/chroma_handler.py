@@ -43,6 +43,10 @@ class ChromaHandler:
             for doc, meta in zip(results["documents"][0], results["metadatas"][0])
         ]
 
+    def get_all_metadata(self) -> list[dict]:
+        """Retrieve all metadatas contained in the vectorstore"""
+        return self.collection.get(include=["metadatas"])["metadatas"]
+
 
 class OllamaEmbeddingFunction(EmbeddingFunction):
     def __init__(self, host: str, model: str):

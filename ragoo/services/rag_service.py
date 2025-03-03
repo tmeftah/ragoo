@@ -84,5 +84,14 @@ class RAGService:
 
         return chunks
 
+    def get_unique_sources(self) -> list[str]:
+        """Retrieves all unique sources from the vectorstore"""
+        metadatas = self.vectorstore.get_all_metadata()
+        if not metadatas:
+            return []
+
+        sources = [metadata.get("source", "unknown") for metadata in metadatas]
+        return list(set(sources))
+
 
 rag_service = RAGService()

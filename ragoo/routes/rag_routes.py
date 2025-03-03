@@ -71,3 +71,15 @@ async def upload_pdf(file: UploadFile, user: dict = Depends(get_current_user)):
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"PDF processing failed: {str(e)}")
+
+
+@router.get("/sources")
+async def get_sources(user: dict = Depends(get_current_user)):
+    """Retrieve all sources from the vectorstore"""
+    try:
+        sources = rag_service.get_unique_sources()
+        return {"sources": sources}
+    except Exception as e:
+        raise HTTPException(
+            status_code=500, detail=f"Failed to retrieve sources: {str(e)}"
+        )
