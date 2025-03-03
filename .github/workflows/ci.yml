@@ -40,6 +40,7 @@ jobs:
       - name: Check FastAPI /health endpoint
         run: |
           response=$(curl -s http://127.0.0.1:8000/health/)
+          echo response
           echo "Response: $response"
           if [ "$response" == '{"status": "OK","service": "RAG API"}' ]; then
             echo "Health check passed"
