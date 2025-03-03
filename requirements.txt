@@ -7,4 +7,5 @@ python-multipart
 pydantic[email]
 pytest
 httpx
+python-jose
 # Add other dependencies here
