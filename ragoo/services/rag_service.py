@@ -12,7 +12,12 @@ class RAGService:
 
     def process_query(self, query: str):
         # Retrieve context
-        context = self.vectorstore.query(query)
+        results = self.vectorstore.query(query)
+        sources = [
+            result["metadata"]["source"] for result in results
+        ]  # get the sources
+
+        context = "\n".join([result["content"] for result in results])
 
         # Format prompt with context
         prompt = f"""Context: {context}
@@ -28,7 +33,7 @@ class RAGService:
             prompt=prompt, temperature=0.1, max_tokens=500
         )
 
-        return {"answer": response, "context": context}
+        return {"answer": response, "context": context, "source": sources}
 
     def chat(self, query: str):
         prompt = f"""Context: {query}"""
