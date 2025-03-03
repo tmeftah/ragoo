@@ -61,7 +61,9 @@ class RAGService:
         except Exception as e:
             raise RuntimeError(f"Document storage failed: {str(e)}")
 
-    def process_pdf(self, pdf_content: bytes, chunk_size: int = 512, overlap: int = 64):
+    def process_pdf(
+        self, pdf_content: bytes, chunk_size: int = 2048, overlap: int = 256
+    ):
 
         # Read PDF from bytes
         pdf_document = pymupdf.open(stream=pdf_content, filetype="pdf")

@@ -35,7 +35,7 @@ class ChromaHandler:
         self.collection.add(ids=ids, documents=documents, metadatas=processed_metadata)
         return ids
 
-    def query(self, query_text: str, k: int = 3) -> list[dict]:
+    def query(self, query_text: str, k: int = 4) -> list[dict]:
         results = self.collection.query(query_texts=[query_text], n_results=k)
 
         return [
