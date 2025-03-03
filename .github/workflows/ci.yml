@@ -23,28 +23,41 @@ jobs:
         run: |
           python -m pip install --upgrade pip        
           pip install -r requirements.txt
-          touch .env
-
-      # - name: Run tests
-      #   run: |
-      #     pytest / -v
 
       - name: Start FastAPI app
         run: |
-
-          nohup  uvicorn ragoo.main:app > /dev/null 2>&1 &
+          uvicorn ragoo.main:app --host 0.0.0.0 --port 8000 > server.log 2>&1 &
           echo $! > uvicorn.pid
-          sleep 10
-          echo "Ragoo-API is running"
+          # Wait for server to start with retries
+          for i in {1..5}; do
+            if curl -s -o /dev/null http://127.0.0.1:8000/health/; then
+              echo "Server started successfully"
+              break
+            fi
+            echo "Waiting for server to start..."
+            sleep 5
+          done
+          # Final check if server is up
+          if ! curl -s -o /dev/null http://127.0.0.1:8000/health/; then
+            echo "::error::Server failed to start. Check logs below:"
+            cat server.log
+            exit 1
+          fi
 
       - name: Check FastAPI /health endpoint
         run: |
           response=$(curl -s http://127.0.0.1:8000/health/)
-          echo response
-          echo "Response: $response"
-          if [ "$response" == '{"status": "OK","service": "RAG API"}' ]; then
+          echo "Raw response: $response"
+
+          # Parse JSON response using jq
+          status=$(echo "$response" | jq -r '.status')
+          service=$(echo "$response" | jq -r '.service')
+
+          if [ "$status" == "OK" ] && [ "$service" == "RAG API" ]; then
             echo "Health check passed"
           else
-            echo "Health check failed"
+            echo "::error::Health check failed"
+            echo "Expected status: 'OK', got: '$status'"
+            echo "Expected service: 'RAG API', got: '$service'"
             exit 1
           fi
