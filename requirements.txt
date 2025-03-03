@@ -10,4 +10,5 @@ httpx
 python-jose
 pydantic_settings
 chromadb
+pymupdf
 # Add other dependencies here
