@@ -1,5 +1,5 @@
 # RAG routes (API endpoints)
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, UploadFile
 
 
 from ragoo.services.rag_service import rag_service
@@ -44,3 +44,30 @@ async def add_documents(
         raise HTTPException(
             status_code=500, detail=f"Document ingestion failed: {str(e)}"
         )
+
+
+@router.post("/upload")
+async def upload_pdf(file: UploadFile, user: dict = Depends(get_current_user)):
+    try:
+        if file.content_type != "application/pdf":
+            raise HTTPException(status_code=400, detail="Invalid file type")
+
+        # Read file content
+        pdf_content = await file.read()
+
+        # Process and chunk PDF (using service)
+        chunks = rag_service.process_pdf(pdf_content)
+
+        # Add documents (chunks) to vector store
+        result = rag_service.add_documents(
+            [(chunk, {"source": file.filename}) for chunk in chunks]
+        )
+
+        return {
+            "message": "PDF uploaded and processed",
+            "chunks_count": len(chunks),
+            "document_ids": result["ids"],
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"PDF processing failed: {str(e)}")

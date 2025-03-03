@@ -1,5 +1,6 @@
 # RAG service logic
 import uuid
+import pymupdf
 from ragoo.vectorestore.chroma_handler import ChromaHandler
 from ragoo.services.ollama_service import OllamaHandler
 
@@ -54,6 +55,27 @@ class RAGService:
             }
         except Exception as e:
             raise RuntimeError(f"Document storage failed: {str(e)}")
+
+    def process_pdf(self, pdf_content: bytes, chunk_size: int = 512, overlap: int = 64):
+
+        # Read PDF from bytes
+        pdf_document = pymupdf.open(stream=pdf_content, filetype="pdf")
+
+        text = ""
+        for page in pdf_document:
+            text += page.get_text()
+
+        # Simple character-based splitting
+        chunks = []
+        start = 0
+        while start < len(text):
+            end = min(start + chunk_size, len(text))
+            chunks.append(text[start:end])
+            start += (
+                chunk_size - overlap
+            )  # Move start position with overlap consideration
+
+        return chunks
 
 
 rag_service = RAGService()
