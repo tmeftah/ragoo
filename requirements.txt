@@ -8,4 +8,5 @@ pydantic[email]
 pytest
 httpx
 python-jose
+pydantic_settings
 # Add other dependencies here
