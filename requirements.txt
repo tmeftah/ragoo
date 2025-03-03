@@ -9,4 +9,5 @@ pytest
 httpx
 python-jose
 pydantic_settings
+chromadb
 # Add other dependencies here
