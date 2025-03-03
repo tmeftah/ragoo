@@ -31,18 +31,18 @@ jobs:
         run: |
           uvicorn ragoo.main:app --host 0.0.0.0 --port 8000 > server.log 2>&1 &
           echo $! > uvicorn.pid
-          # Wait for server to start with retries
+          # Wait for server with retries
           for i in {1..5}; do
-            if curl -s -o /dev/null http://127.0.0.1:8000/health/; then
+            if curl -s -o /dev/null http://127.0.0.1:8000/health; then
               echo "Server started successfully"
               break
             fi
-            echo "Waiting for server to start..."
+            echo "Waiting for server to start (attempt $i/5)..."
             sleep 5
           done
-          # Final check if server is up
-          if ! curl -s -o /dev/null http://127.0.0.1:8000/health/; then
-            echo "::error::Server failed to start. Check logs below:"
+          # Final startup check
+          if ! curl -s -o /dev/null http://127.0.0.1:8000/health; then
+            echo "::error::Server failed to start. Logs:"
             cat server.log
             exit 1
           fi
@@ -52,7 +52,7 @@ jobs:
           response=$(curl -s http://127.0.0.1:8000/health)
           echo "Raw response: $response"
 
-          # Parse JSON response using jq
+          # Parse JSON using jq
           status=$(echo "$response" | jq -r '.status')
           service=$(echo "$response" | jq -r '.service')
 
@@ -60,7 +60,7 @@ jobs:
             echo "Health check passed"
           else
             echo "::error::Health check failed"
-            echo "Expected status: 'OK', got: '$status'"
-            echo "Expected service: 'RAG API', got: '$service'"
+            echo "Expected: status=OK, service='RAG API'"
+            echo "Received: status=$status, service='$service'"
             exit 1
           fi

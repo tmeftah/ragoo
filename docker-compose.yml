@@ -1,11 +1,10 @@
-# Docker compose configuration
-
-version: "3.9"
 services:
-  web:
-    build: .
+  ragoo:
+    image: ragoo:last
     ports:
-      - "8000:8000"
+      - "8001:8000"
+    environment:
+      - OLLAMA_HOST=http://ollama:11434
+      - CHROMA_PERSIST_DIR=/app/chroma_data
     volumes:
-      - .:/app
-    command: uvicorn ragoo.main:app --host 0.0.0.0 --reload
+      - ./app/chroma_data:/app/chroma_data

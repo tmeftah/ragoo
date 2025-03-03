@@ -1,8 +1,8 @@
 # FastAPI application initialization
 from fastapi import FastAPI
-from .routes import user_routes, rag_routes, health
-from .database import models
-from .database.database import engine
+from ragoo.routes import user_routes, rag_routes, health
+from ragoo.database import models
+from ragoo.database.database import engine
 
 models.Base.metadata.create_all(bind=engine)
 
