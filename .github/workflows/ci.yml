@@ -35,12 +35,13 @@ jobs:
           nohup  uvicorn ragoo.main:app > /dev/null 2>&1 &
           echo $! > uvicorn.pid
           sleep 10
-          echo "Aora-API is running"
+          echo "Ragoo-API is running"
+
       - name: Check FastAPI /health endpoint
         run: |
           response=$(curl -s http://127.0.0.1:8000/health/)
           echo "Response: $response"
-          if [ "$response" == '{"status": "OK","service": "RAG API",}' ]; then
+          if [ "$response" == '{"status": "OK","service": "RAG API"}' ]; then
             echo "Health check passed"
           else
             echo "Health check failed"
