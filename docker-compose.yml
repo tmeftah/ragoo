@@ -1,6 +1,7 @@
 services:
   ragoo:
     image: ragoo:last
+    build: .
     ports:
       - "8001:8000"
     environment:
