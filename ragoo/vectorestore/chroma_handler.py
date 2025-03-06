@@ -17,6 +17,7 @@ class ChromaHandler:
         self.collection = self.client.get_or_create_collection(
             name=settings.CHROMA_COLLECTION_NAME,
             embedding_function=self.embedding_function,
+            metadata={"hnsw:space": "cosine"},
         )
 
     def add_documents(self, documents: list[str], metadata: list[dict]):
