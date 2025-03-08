@@ -12,11 +12,12 @@ class OllamaHandler:
     def generate_completion(self, prompt: str, **kwargs) -> str:
         """Generate text completion using Ollama"""
         try:
-            response = requests.post(
-                f"{self.base_url}/api/generate",
-                json={"model": self.model, "prompt": prompt, **kwargs},
-                stream=False,  # Set to True if you want streaming
-            )
+            url = f"{self.base_url}/api/generate"
+            headers = {"Content-Type": "application/json"}
+            data = {"model": self.model, "prompt": prompt, "stream": False}
+
+            response = requests.post(url, headers=headers, data=json.dumps(data))
+
             response.raise_for_status()
 
             # Handle streaming response if needed
